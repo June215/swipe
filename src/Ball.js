@@ -12,7 +12,7 @@ export default class Ball extends React.Component {
   render() {
     return (
       <Animated.View style={this.position.getLayout()}>
-        <View style={styles.ball} />
+          <View style={styles.ball    } />
       </Animated.View>
     );
   }
@@ -20,10 +20,10 @@ export default class Ball extends React.Component {
 
 const styles = StyleSheet.create({
   ball: {
-    height: 120,
-    width: 120,
-    borderRadius: 60,
-    borderWidth: 60,
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    borderWidth: 30,
     borderColor: 'red',
   },
 });
