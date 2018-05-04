@@ -15,5 +15,6 @@ module.exports = {
     "react-native/split-platform-components": 2,
     "react-native/no-inline-styles": 1,
     "react-native/no-color-literals": 1,
+    "object-curly-spacing": ["error", "always"]
   }
 }

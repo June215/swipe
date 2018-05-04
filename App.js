@@ -19,15 +19,15 @@ export default class App extends React.Component {
     return (
       <Card
         key={ item.id }
-        title={ item.text }
-        image={ {uri:item.uri} }>
-        <Text style={{marginBottom: 10}}>
-          { item.text }
+        title={ item.text}
+        image={{ uri:item.uri }}>
+        <Text style={{ marginBottom: 10 }}>
+          I can customize!!!
         </Text>
         <Button
-          icon={{name: 'code'}}
+          icon={{ name: 'code' }}
           backgroundColor='#03A9F4'
-          buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+          buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
           title='VIEW NOW' />
       </Card>
     );
