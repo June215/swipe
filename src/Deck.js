@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
+const SWIPE_OUT_DURATION = 250;
 
 export default class Ball extends Component {
   static propTypes = {
@@ -45,11 +47,42 @@ export default class Ball extends Component {
         console.log('x', position.x._value);
         console.log('y', position.y._value);
       },
-      onPanResponderRelease: () => {
+      onPanResponderRelease: (event, gesture) => {
         console.log('PanResponder released');
+        console.log(gesture);
+        console.log('dx', gesture.dx);
+        console.log('dy', gesture.dy);
+        if (gesture.dx > SWIPE_THRESHOLD) {
+          console.log('swipe right');
+          this.forceSwipe('right');
+        } else if (gesture.dx < -SWIPE_THRESHOLD) {
+          console.log('swipe left');
+          this.forceSwipe('left');
+        } else {
+          this.resetPosition();
+        }
       }
     });
     this.state = { position };
+  }
+
+  onSwipeComplete(direction) {
+    // const { onSwipeRight, onSwipeLeft } = this.props;
+    // direction === 'right' ? onSwipeRight() : onSwipeLeft();
+  }
+
+  forceSwipe(direction) {
+    const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
+    Animated.timing(this.state.position, {
+      toValue: { x, y: 0 },
+      duration: SWIPE_OUT_DURATION
+    }).start((() => this.onSwipeComplete(direction)));
+  }
+
+  resetPosition() {
+    Animated.spring(this.state.position, {
+      toValue: { x: 0, y: 0 },
+    }).start();
   }
 
   getCardStyle() {
