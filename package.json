@@ -6,6 +6,7 @@
     "lint-fix": "eslint . --ext .js --fix"
   },
   "dependencies": {
+    "@types/react": "^16.3.14",
     "expo": "^27.0.1",
     "prop-types": "^15.6.1",
     "react": "16.3.1",

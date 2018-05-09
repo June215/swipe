@@ -54,8 +54,6 @@ export default class App extends React.Component {
         <Deck
           data={ this.state.data }
           renderCard={ this.renderCard }
-          onSwipeLeft={ this.removeFirstElement }
-          onSwipeRight={ this.removeFirstElement }
         />
       </View>
     );

@@ -40,10 +40,7 @@ export default class Deck extends Component {
 
   constructor(props) {
     super(props);
-    const position = new Animated.ValueXY();
-    // console.log(this.position);
-    // console.log('x', this.position.x._value);
-    // console.log('y', this.position.y._value);
+    this.position = new Animated.ValueXY();
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => {
         console.log('PanResponder started');
@@ -53,13 +50,7 @@ export default class Deck extends Component {
         console.log(gesture);
         console.log('dx', gesture.dx);
         console.log('dy', gesture.dy);
-        // const x = this.position.x._value + gesture.dx;
-        // const y = this.position.y._value + gesture.dy;
-        // Animated.spring(this.position, { toValue: { x, y } }).start();
-        // this.position.setValue({ x, y });
-        position.setValue({ x: gesture.dx });
-        console.log('x', position.x._value);
-        console.log('y', position.y._value);
+        this.position.setValue({ x: gesture.dx });
       },
       onPanResponderRelease: (event, gesture) => {
         console.log('PanResponder released');
@@ -77,7 +68,7 @@ export default class Deck extends Component {
         }
       }
     });
-    this.state = { position, index: 0 };
+    this.state = { index: 0 };
   }
 
   render() {
@@ -89,8 +80,12 @@ export default class Deck extends Component {
   }
 
   renderCards() {
-    return this.props.data.map((item, index) => {
-      if (index === 0) {
+    return this.props.data.map((item, i) => {
+      if (i < this.state.index) {
+        return null;
+      }
+
+      if (i === this.state.index) {
         return (
           <Animated.View
             { ...this.panResponder.panHandlers }
@@ -101,18 +96,19 @@ export default class Deck extends Component {
           </Animated.View>
         );
       }
+
       return  this.props.renderCard(item);
     });
   }
 
   resetPosition() {
-    Animated.spring(this.state.position, {
+    Animated.spring(this.position, {
       toValue: { x: 0, y: 0 },
     }).start();
   }
 
   resetPositionNoSpring() {
-    this.state.position.setValue({ x: 0, y: 0 });
+    this.position.setValue({ x: 0, y: 0 });
   }
 
   onSwipeComplete(direction) {
@@ -120,24 +116,24 @@ export default class Deck extends Component {
     const item = data[this.state.index];
     direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item);
     this.resetPositionNoSpring();
+    this.setState({ index: this.state.index + 1 });
   }
 
   forceSwipe(direction) {
     const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-    Animated.timing(this.state.position, {
+    Animated.timing(this.position, {
       toValue: { x, y: 0 },
       duration: SWIPE_OUT_DURATION
     }).start((() => this.onSwipeComplete(direction)));
   }
 
   getCardStyle() {
-    const { position } = this.state;
-    const rotate = position.x.interpolate({
+    const rotate = this.position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 2, 0, SCREEN_WIDTH * 2],
       outputRange: ['-120deg', '0deg', '120deg']
     });
     return {
-      ...position.getLayout(),
+      ...this.position.getLayout(),
       transform: [{ rotate }]
     };
   }
