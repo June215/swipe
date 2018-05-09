@@ -32,12 +32,30 @@ export default class App extends React.Component {
       </Card>
     );
   }
+
+  removeFirstElement() {
+    let newData = [...this.state.data];
+    newData.shift();
+    this.setState({ data: newData });
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: DATA
+    };
+    this.removeFirstElement = this.removeFirstElement.bind(this);
+  }
+
   render() {
+    console.log(111, this.state.data);
     return (
       <View style={styles.container}>
         <Deck
-          data={ DATA }
+          data={ this.state.data }
           renderCard={ this.renderCard }
+          onSwipeLeft={ this.removeFirstElement }
+          onSwipeRight={ this.removeFirstElement }
         />
       </View>
     );
