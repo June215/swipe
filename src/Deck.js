@@ -5,12 +5,20 @@ import {
   View,
   Animated,
   PanResponder,
-  Dimensions
+  Dimensions,
+  LayoutAnimation,
+  UIManager
 } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 const SWIPE_OUT_DURATION = 250;
+const styles = {
+  cardStyle: {
+    position: 'absolute',
+    width: SCREEN_WIDTH
+  }
+};
 
 export default class Deck extends Component {
   static propTypes = {
@@ -23,7 +31,8 @@ export default class Deck extends Component {
     ),
     renderCard: PropTypes.func.isRequired,
     onSwipeRight: PropTypes.func,
-    onSwipeLeft: PropTypes.func
+    onSwipeLeft: PropTypes.func,
+    renderNoMoreCards: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -71,6 +80,17 @@ export default class Deck extends Component {
     this.state = { index: 0 };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState({ index: 0 });
+    }
+  }
+
+  componentWillUpdate() {
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    LayoutAnimation.spring();
+  }
+
   render() {
     return (
       <View>
@@ -80,6 +100,9 @@ export default class Deck extends Component {
   }
 
   renderCards() {
+    if (this.props.data.length <= this.state.index) {
+      return this.props.renderNoMoreCards();
+    }
     return this.props.data.map((item, i) => {
       if (i < this.state.index) {
         return null;
@@ -89,7 +112,7 @@ export default class Deck extends Component {
         return (
           <Animated.View
             { ...this.panResponder.panHandlers }
-            style={ this.getCardStyle() }
+            style={ [this.getCardStyle(), styles.cardStyle] }
             key={ item.id }
           >
             { this.props.renderCard(item) }
@@ -97,8 +120,15 @@ export default class Deck extends Component {
         );
       }
 
-      return  this.props.renderCard(item);
-    });
+      return (
+        <Animated.View
+          key={item.id}
+          style={ [styles.cardStyle, { top: 10 * (i - this.state.index) }] }
+        >
+          { this.props.renderCard(item) }
+          </Animated.View>
+      );
+    }).reverse();
   }
 
   resetPosition() {

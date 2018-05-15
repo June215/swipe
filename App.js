@@ -33,6 +33,20 @@ export default class App extends React.Component {
     );
   }
 
+  renderNoMoreCards() {
+    return (
+      <Card
+        title='All Done!'>
+        <Text style={{ marginBottom: 10 }}>
+          There is no more content here!
+        </Text>
+        <Button
+          backgroundColor='#03A9F4'
+          title='Get more' />
+      </Card>
+    );
+  }
+
   removeFirstElement() {
     let newData = [...this.state.data];
     newData.shift();
@@ -54,6 +68,7 @@ export default class App extends React.Component {
         <Deck
           data={ this.state.data }
           renderCard={ this.renderCard }
+          renderNoMoreCards={ this.renderNoMoreCards }
         />
       </View>
     );
